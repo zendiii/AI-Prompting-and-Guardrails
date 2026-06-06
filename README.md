@@ -1,3 +1,109 @@
+# AI-Assisted Development: Safe & Effective Practices
+
+> A guide for starting and continuing projects with agentic AI (Claude Code) safely — plus a Code Mentor prompt to get you coding with best practices from day one.
+
+---
+
+## Agentic AI Best Practices
+
+These practices are drawn from [dotclaude](https://github.com/poshan0126/dotclaude), a community-validated framework for safe, structured AI-assisted development.
+
+> **Quick start:** Copy [`CLAUDE.md.template`](CLAUDE.md.template) into your project root, rename it to `CLAUDE.md`, fill in 3–4 fields, and you're configured for an agentic session.
+
+### 1. Write a Lean CLAUDE.md
+
+Your `CLAUDE.md` file is the first thing an AI agent reads — it sets the context for every session. Keep it tight.
+
+- **Target under 25 non-blank lines.** Every line costs tokens from your context window.
+- **Record WHY, not WHAT.** Don't describe your file structure — the AI can explore. Instead document non-obvious decisions: `"Auth tokens in httpOnly cookies because XSS risk"`.
+- **Don't duplicate style guides.** Code style lives in separate rule files; CLAUDE.md is for architecture decisions and domain knowledge only.
+- **Delete what doesn't apply.** A bloated CLAUDE.md is worse than a minimal one.
+
+```markdown
+# Example CLAUDE.md (lean version)
+## Key Decisions
+- Billing is a separate module for audit independence
+- All DB access goes through services/ layer, never from controllers
+
+## Domain Knowledge
+- "SKU" = Stock Keeping Unit, unique product ID from our warehouse system
+
+## Don'ts
+- Don't modify *.gen.ts or *.generated.* files
+- Prefer fixing the root cause over adding workarounds
+```
+
+### 2. Enable Safety Hooks
+
+Before giving an AI agent broad file access, protect yourself with these hooks in your `.claude/` config:
+
+| Hook | What it does |
+|------|-------------|
+| `protect-files` | Blocks edits to sensitive files (`.env`, credentials, config secrets) |
+| `scan-secrets` | Detects credentials before they're committed |
+| `block-dangerous-commands` | Prevents `rm -rf`, force-pushes, and other destructive shell commands |
+| `warn-large-files` | Flags binary or large file uploads before they hit version control |
+
+> If you're using Claude Code, hooks run automatically before/after tool calls — they don't require your attention, they just protect you silently.
+
+### 3. Plan Before You Code
+
+Agentic AI is fast — that's also the risk. Before starting any non-trivial change:
+
+- **Use plan mode** (`Shift+Tab` in Claude Code) to review the AI's approach before it writes a single line.
+- **Ask for a step-by-step plan** when the change touches multiple files or systems.
+- **Confirm scope** before the agent acts — an autonomous agent that misunderstands scope can do a lot of work in the wrong direction very quickly.
+
+### 4. Organize Rules by Domain
+
+Instead of one giant instruction file, split concerns into modular rule files that load only when relevant:
+
+```
+.claude/rules/
+  code-quality.md   # naming, comments, organization
+  security.md       # injection, auth, cryptography rules
+  testing.md        # test conventions (always loaded)
+  database.md       # migration safety (loads near migrations)
+  frontend.md       # design tokens, accessibility
+```
+
+This keeps context windows lean — security rules only load when you're near auth code, not during every session.
+
+### 5. Use Specialist Agents for Review
+
+Don't ask one generalist agent to review everything. Delegate to specialists:
+
+- **Code reviewer** — correctness and maintainability
+- **Security reviewer** — injection, auth, and cryptography issues
+- **Performance reviewer** — real bottlenecks, not theoretical ones
+- **Frontend designer** — UI/UX consistency, prevents generic AI aesthetics
+
+Running a `/pr-review` that fans out to these specialists catches more issues than a single pass.
+
+### 6. Treat Agentic Sessions Like a Junior Dev's First Week
+
+A capable but unsupervised agent can confidently do the wrong thing. Apply the same guardrails you'd use onboarding a junior developer:
+
+- **Never give write access to production systems** during a session unless explicitly needed.
+- **Review diffs before committing** — don't auto-commit agent output.
+- **Keep sensitive files out of context** — use `.claude/settings.json` to restrict what the agent can read.
+- **Confirm destructive actions** — the agent should ask before deleting files, dropping tables, or force-pushing branches.
+
+### 7. Structured Workflows > Ad-hoc Prompts
+
+For common tasks, use structured slash-command workflows instead of typing freeform prompts each time:
+
+| Workflow | Purpose |
+|----------|---------|
+| `/debug-fix` | Bug hunting with regression tests or hotfix mode |
+| `/ship` | Commit → push → PR in one structured flow |
+| `/tdd` | Red-green-refactor test-driven development loop |
+| `/refactor` | Safe refactoring with guardrails |
+
+Repeatable workflows mean the agent follows the same safe process every time, not whatever it infers from a casual prompt.
+
+---
+
 # Code Mentor: Foundational Best Practices Prompt
 
 **Role:** You are an expert code mentor and developer who writes clean, maintainable, production-ready code while teaching best practices to developers of all levels—especially those who are just starting out.

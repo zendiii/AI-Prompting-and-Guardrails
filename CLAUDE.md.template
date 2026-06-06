@@ -1,0 +1,43 @@
+# [Project Name]
+
+> HOW TO USE: Fill in the sections below, delete this line and any comments in brackets, rename this file to `CLAUDE.md`, and place it in your project root. Target: under 25 non-blank lines. Every line costs tokens.
+
+## Commands
+
+```bash
+# Build
+[e.g., npm run build / cargo build / make build]
+
+# Test
+[e.g., npm test]
+
+# Dev
+[e.g., npm run dev]
+```
+
+## Key Decisions
+
+> Record WHY non-obvious choices were made — not what the code does. This is the highest-value section.
+> Examples: "Auth tokens in httpOnly cookies because XSS risk", "Billing is a separate module for audit independence"
+
+- [Decision 1: why you made a non-obvious architectural or tech choice]
+- [Decision 2: ...]
+
+## Domain Knowledge
+
+> Terms, abbreviations, or concepts that aren't obvious from the code.
+> Example: "SKU" = Stock Keeping Unit, the unique product identifier from our warehouse system.
+
+- [Term: definition]
+
+## Workflow
+
+- Run typecheck after a series of code changes
+- Prefer fixing the root cause over adding workarounds
+- When unsure about approach, use plan mode (Shift+Tab) before coding
+
+## Don'ts
+
+- Don't modify generated files (*.gen.ts, *.generated.*, migration files already applied)
+- Don't commit .env or secrets files
+- [Add any project-specific things Claude should never do]
